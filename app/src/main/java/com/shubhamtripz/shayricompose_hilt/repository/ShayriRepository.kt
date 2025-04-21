@@ -9,10 +9,12 @@ import javax.inject.Inject
 class ShayriRepository @Inject constructor(private val shayriAPI: ShayriAPI) {
 
     private val _categories = MutableStateFlow<List<String>>(emptyList())
-    val categories : StateFlow<List<String>> = _categories
+    val categories : StateFlow<List<String>>
+    get() = _categories
 
     private val _shayris = MutableStateFlow<List<ShayriItem>>(emptyList())
-    val shayris : StateFlow<List<ShayriItem>> = _shayris
+    val shayris : StateFlow<List<ShayriItem>>
+    get() = _shayris
 
     suspend fun getCategory(){
         val response = shayriAPI.getCategories()
@@ -22,7 +24,7 @@ class ShayriRepository @Inject constructor(private val shayriAPI: ShayriAPI) {
     }
 
     suspend fun getShayris(category: String){
-        val response = shayriAPI.getShayris(category)
+        val response = shayriAPI.getShayris("shayri[?(@.category==\"$category\")]")
         if (response.isSuccessful && response.body() != null){
             _shayris.emit(response.body()!!)
         }
